@@ -1,2 +1,4 @@
 node_modules
-object.json
+
+./object.json
+./dbinfo
