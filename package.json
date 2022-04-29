@@ -1,0 +1,17 @@
+{
+  "name": "nfkutvikleroppgave",
+  "version": "1.0.0",
+  "description": "Oppgave for utvikler stilling",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "start"
+  },
+  "author": "Adel Johan Holm Gundersen",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.18.1",
+    "node-fetch": "^3.2.4",
+    "xlsx": "^0.18.5"
+  }
+}
