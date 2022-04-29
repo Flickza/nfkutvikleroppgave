@@ -1,11 +1,12 @@
 import convertxlsx from './xlsxtoarray.js';
 import mysql from 'mysql';
 import fetch from 'node-fetch';
+import { DB_USERNAME, DB_PASSWORD } from '../dbconfig.js';
 
 var connection = mysql.createConnection({
     host: 'localhost',
-    user: 'main',
-    password: 'adminadmin',
+    user: DB_USERNAME,
+    password: DB_PASSWORD,
     database: 'organisasjoner'
 });
 
