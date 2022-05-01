@@ -10,6 +10,8 @@
   "author": "Adel Johan Holm Gundersen",
   "license": "ISC",
   "dependencies": {
+    "bootstrap-table": "^1.20.0",
+    "jquery": "^3.6.0",
     "mysql": "^2.18.1",
     "node-fetch": "^3.2.4",
     "xlsx": "^0.18.5"

@@ -10,15 +10,16 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/bootstrap-table@1.20.0/dist/bootstrap-table.min.css"
+    />
+    <link rel="stylesheet" href="/styles.css" />
     <title>Organisasjoner</title>
   </head>
   <body>
-    <div
-      id="main"
-      class="container"
-      style="background-color: #1482ff; color: white"
-    >
+    <div id="main" class="container">
       <nav class="navbar navbar-expand-lg navbar-light bg-light-blue fw-bold">
         <div class="container-fluid">
           <button
@@ -35,13 +36,10 @@
           <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
+                <a class="nav-link active" aria-current="page" href="#">Hjem</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Features</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Pricing</a>
+                <a class="nav-link" href="#">Kategorier</a>
               </li>
             </ul>
             <span class="navbar-text">
@@ -50,11 +48,40 @@
           </div>
         </div>
       </nav>
+      <div class="container">
+        <div class="row">
+          <div class="col-2">test</div>
+          <div class="col-8">
+            <table
+              id="table"
+              data-pagination="true"
+              data-search="true"
+              data-advanced-search="true"
+              data-id-table="advancedTable"
+              data-url="json/data1.json"
+            >
+              <thead>
+                <tr>
+                  <th data-field="id" data-sortable="true">ID</th>
+                  <th data-field="name" data-sortable="true">Item Name</th>
+                  <th data-field="price" data-sortable="true">Item Price</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="col-2">test</div>
+        </div>
+      </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
     ></script>
+    <script src="https://unpkg.com/bootstrap-table@1.20.0/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.20.0/dist/extensions/toolbar/bootstrap-table-toolbar.min.js"></script>
+    <script src="/table.js"></script>
   </body>
 </html>
