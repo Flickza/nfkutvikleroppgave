@@ -1,0 +1,12 @@
+.bg-light-blue {
+  background-color: #1482ff !important;
+}
+.nav-link.active{
+    color: black !important;
+}
+.nav-item {
+    font-size: 50px;
+}
+.navbarText{
+    font-size: 50px;
+}
