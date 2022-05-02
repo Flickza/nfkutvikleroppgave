@@ -1,7 +1,7 @@
-import convertxlsx from './xlsxtoarray.js';
+import convertxlsx from '../static/js/xlsxtoarray.js';
 import mysql from 'mysql';
 import fetch from 'node-fetch';
-import { DB_USERNAME, DB_PASSWORD } from '../../dbconfig.js';
+import { DB_USERNAME, DB_PASSWORD } from '../dbconfig.js';
 
 //database configuration
 var con = mysql.createConnection({
@@ -86,58 +86,59 @@ var main = async (orgData) => {
         }
         return;
     }
-    if (orgData.hasOwnProperty('forretningsadresse')) {
-        kommune_select_insert(orgData.forretningsadresse.kommunenummer, orgData.forretningsadresse.kommune, function (result) {
-            config.kommune_id = result;
-            //naeringskode
-            koder("naeringskode", orgData.naeringskode1.kode, orgData.naeringskode1.beskrivelse, function (result) {
-                config.naering_id = result;
-                //institusjonellSektorkode
-                koder("instsektorkode", orgData.institusjonellSektorkode.kode, orgData.institusjonellSektorkode.beskrivelse, function (result) {
-                    config.instsektor_id = result;
-                    //organisasjonsform
-                    koder("orgformkode", orgData.organisasjonsform.kode, orgData.organisasjonsform.beskrivelse, function (result) {
-                        config.orgform_id = result;
-                        //land
-                        land(orgData.forretningsadresse.landkode, orgData.forretningsadresse.land, function (result) {
-                            config.land_id = result;
-                            //forretnings adresse poststed
-                            poststed(orgData.forretningsadresse.postnummer, orgData.forretningsadresse.poststed, function (result) {
-                                config.forretning_poststed_id = result;
-                                //forretningsadresse
-                                adresser("forretningsadresse", orgData.forretningsadresse.adresse[0], config.forretning_poststed_id, config.land_id, function (result) {
-                                    config.forretningsadresse_id = result;
-                                    //organisasjon
-                                    org(
-                                        orgData.organisasjonsnummer,
-                                        orgData.navn,
-                                        orgData.antallAnsatte,
-                                        config.orgform_id,
-                                        config.instsektor_id,
-                                        config.naering_id,
-                                        orgData.stiftelsesdato,
-                                        orgData.registreringsdatoEnhetsregisteret,
-                                        orgData.sisteInnsendteAarsregnskap,
-                                        orgData.konkurs,
-                                        orgData.underAvvikling,
-                                        orgData.underTvangsavviklingEllerTvangsopplosning,
-                                        orgData.registrertIFrivillighetsregisteret,
-                                        orgData.registrertIStiftelsesregisteret,
-                                        orgData.registrertIForetaksregisteret,
-                                        config.forretningsadresse_id,
-                                        config.kommune_id,
-                                        function (result) {
-                                            console.log(result);
-                                        }
-                                    );
-                                });
+    var adresse;
+    if (orgData.hasOwnProperty('forretningsadresse')) adresse = orgData.forretningsadresse;
+    if (orgData.hasOwnProperty('postadresse')) adresse = orgData.postadresse;
+    kommune_select_insert(adresse.kommunenummer, adresse.kommune, function (result) {
+        config.kommune_id = result;
+        //naeringskode
+        koder("naeringskode", orgData.naeringskode1.kode, orgData.naeringskode1.beskrivelse, function (result) {
+            config.naering_id = result;
+            //institusjonellSektorkode
+            koder("instsektorkode", orgData.institusjonellSektorkode.kode, orgData.institusjonellSektorkode.beskrivelse, function (result) {
+                config.instsektor_id = result;
+                //organisasjonsform
+                koder("orgformkode", orgData.organisasjonsform.kode, orgData.organisasjonsform.beskrivelse, function (result) {
+                    config.orgform_id = result;
+                    //land
+                    land(orgData.landkode, adresse.land, function (result) {
+                        config.land_id = result;
+                        //forretnings adresse poststed
+                        poststed(adresse.postnummer, adresse.poststed, function (result) {
+                            config.forretning_poststed_id = result;
+                            //forretningsadresse
+                            adresser("forretningsadresse", adresse.adresse[0], config.forretning_poststed_id, config.land_id, function (result) {
+                                config.forretningsadresse_id = result;
+                                //organisasjon
+                                org(
+                                    orgData.organisasjonsnummer,
+                                    orgData.navn,
+                                    orgData.antallAnsatte,
+                                    config.orgform_id,
+                                    config.instsektor_id,
+                                    config.naering_id,
+                                    orgData.stiftelsesdato,
+                                    orgData.registreringsdatoEnhetsregisteret,
+                                    orgData.sisteInnsendteAarsregnskap,
+                                    orgData.konkurs,
+                                    orgData.underAvvikling,
+                                    orgData.underTvangsavviklingEllerTvangsopplosning,
+                                    orgData.registrertIFrivillighetsregisteret,
+                                    orgData.registrertIStiftelsesregisteret,
+                                    orgData.registrertIForetaksregisteret,
+                                    config.forretningsadresse_id,
+                                    config.kommune_id,
+                                    function (result) {
+                                        console.log(result);
+                                    }
+                                );
                             });
                         });
                     });
                 });
             });
         });
-    }
+    });
 };
 
 var kommune_select_insert = (kommune_nr, kommune_navn, callback) => {
@@ -268,8 +269,8 @@ var adresser = (title, adresse, poststed_id, land_id, callback) => {
 
 var org = (orgnr, navn, ansatte, orgform_id, instsektor_id, naeringskode_id, stiftelsedato, regdato, sistaarsregnskap, konkurs, under_avvikling, under_tvangsavvikling, frivillighetsregisteret, stiftelsesregisteret, foretaksregisteret, forretningsadresse_id, kommune_nr_id, callback) => {
     //execute main query
-    if (stiftelsedato == undefined) stiftelsedato = "0-0-0";
-    if (sistaarsregnskap == undefined) sistaarsregnskap = "0-0-0";
+    if (stiftelsedato == undefined) stiftelsedato = "";
+    if (sistaarsregnskap == undefined) sistaarsregnskap = "";
     con.query(`SELECT id FROM org WHERE orgnr='${orgnr}'`, function (err, result) {
         //throw error if error
         if (err) throw err;
@@ -289,7 +290,7 @@ var org = (orgnr, navn, ansatte, orgform_id, instsektor_id, naeringskode_id, sti
                 forretningsadresse_id, kommune_nr_id)
                 VALUES (
                '${orgnr}',
-               " ${navn}",
+               "${navn}",
                '${ansatte}',
                '${orgform_id}',
                '${instsektor_id}',

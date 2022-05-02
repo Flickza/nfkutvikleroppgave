@@ -11,7 +11,7 @@ var con = mysql.createPool({
 });
 
 
-var getOrgs = async (x) => {
+var getOrgs = async () => {
     return new Promise((resolve, reject) => {
             con.query(`SELECT * FROM org
             INNER JOIN orgformkode ON org.orgformkode_id = orgformkode.id
@@ -19,7 +19,7 @@ var getOrgs = async (x) => {
             INNER JOIN instsektorkode ON org.instsektorkode_id = instsektorkode.id
             INNER JOIN kommune ON org.kommune_nr_id = kommune.id
             INNER JOIN forretningsadresse ON org.forretningsadresse_id = forretningsadresse.id
-            WHERE org.id BETWEEN 1 AND ${x}
+            ORDER BY org.id ASC
             `, function (err, result, fields) {
                 if (err) throw err;
                 resolve(result);
