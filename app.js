@@ -12,7 +12,7 @@ app.get('/', function(req, res) {
   res.sendFile('/static/html/index.html', {root: "./" })
 });
 app.get('/api/organisasjoner', async function(req, res) {
-  await getOrgs(500).then(result => {
+  await getOrgs().then(result => {
     res.send(result);
   });
 });

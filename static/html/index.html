@@ -14,10 +14,8 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
     />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/bootstrap-table@1.20.0/dist/bootstrap-table.min.css"
-    />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/fh-3.2.2/r-2.2.9/sb-1.3.2/sp-2.0.0/datatables.min.css"/>
+
     <link rel="stylesheet" href="/static/css/styles.css" />
     <title>Organisasjoner</title>
   </head>
@@ -69,29 +67,22 @@
           <div class="container-fluid" style="width: 90%">
             <div class="row">
               <div class="col-12">
-                <table
-                  id="table"
-                  data-pagination="true"
-                  data-search="true"
-                  data-advanced-search="true"
-                  data-id-table="advancedTable"
-                  data-url="/api/organisasjoner"
-                  data-locale="nb-NO"
-                >
+                <table id="table" class="table table-striped display" style="width:100%">
                   <thead>
-                    <tr>
-                      <th data-field="orgnr" data-sortable="true">Organisasjons nummer</th>
-                      <th data-field="navn" data-sortable="true">Navn</th>
-                      <th data-field="ansatte" data-sortable="true">Ansatte</th>
-                      <th data-field="kommune_navn" data-sortable="true">Kommune</th>
-                      <th data-field="orgformkode" data-sortable="true">orgformkode_id</th>
-                      <th data-field="instsektorkode" data-sortable="true">instsektorkode_id</th>
-                      <th data-field="naeringskode" data-sortable="true">naeringskode_id</th>
-                      <th data-field="stiftelsedato" data-sortable="true">stiftelsedato</th>
-                      <th data-field="regdato" data-sortable="true">regdato</th>
-                    </tr>
+                      <tr>
+                        <th>Organisasjons nummer</th>
+                        <th>Navn</th>
+                        <th>Ansatte</th>
+                        <th>Kommune</th>
+                        <th>Organisasjonsform</th>
+                        <th>InstitusjonellSektorkode</th>
+                        <th>Næringskode</th>
+                        <th>Stiftelsedato</th>
+                        <th>Regdato</th>
+                        <th>Status</th>
+                      </tr>
                   </thead>
-                </table>
+              </table>
               </div>
             </div>
           </div>
@@ -105,9 +96,11 @@
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
     ></script>
-    <script src="https://unpkg.com/bootstrap-table@1.20.0/dist/bootstrap-table.min.js"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.20.0/dist/extensions/toolbar/bootstrap-table-toolbar.min.js"></script>
-    <script src="/locale"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/fh-3.2.2/r-2.2.9/sb-1.3.2/sp-2.0.0/datatables.min.js"></script>    
+    <!-- <script src="/locale"></script> -->
     <script src="/static/js/table.js"></script>
   </body>
 </html>
