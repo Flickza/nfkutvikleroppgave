@@ -1,41 +1,32 @@
-//imports
-import http from 'http';
-import fs from 'fs';
+/* Install express on to the terminal by typing this: `npm i express`, you should
+have node installed. */
+
+import express from 'express';
+const app = express();
+import getOrgs from './services/getorg.js';
 
 
-//server configuration
-const hostname = '127.0.0.1';
-const port = 3000;
-
-const server = http.createServer((req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/html');
-    if (req.url === "/") {
-        fs.readFile('./index.html', (err, html) => {
-            if (err) {
-                res.statusCode = 500;
-                res.end('Error');
-            } else {
-                res.setHeader('Content-type', 'text/html');
-                res.write(html);
-                res.statusCode = 200;
-                res.end();
-            }
-        });
-    } else if (req.url === '/styles.css') {
-        res.setHeader('Content-type', 'text/css');
-        res.write(fs.readFileSync('./css/styles.css'));
-        res.end();
-    } else if (req.url === '/table.js') {
-        res.setHeader('Content-type', 'text/javascript');
-        res.write(fs.readFileSync('./js/table.js'));
-        res.end();
-    } else {
-        res.write("invalid request")
-        res.end();
-    }
+/* This action will happen if the user connects to the website, to do the action
+if they are in a certain route, just do /<your route name>*/
+app.get('/', function(req, res) {
+  res.sendFile('index.html', {root: "./" })
+});
+app.get('/api/organisasjoner', async function(req, res) {
+  await getOrgs(500).then(result => {
+    res.send(result);
+  });
 });
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+app.get('/locale', function(req, res) {
+  res.sendFile('/node_modules/bootstrap-table/dist/locale/bootstrap-table-nb-NO.js', {root: "./" })
 });
+app.use('/static', express.static('static'))
+
+
+
+
+const PORT = 3000
+// On localhost:3000 you will see your page.
+app.listen(PORT);
+
+

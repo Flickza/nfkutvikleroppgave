@@ -1,4 +1,3 @@
-
 $(function () {
     $("#table").bootstrapTable();
 });

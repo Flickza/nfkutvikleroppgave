@@ -15,13 +15,13 @@
       rel="stylesheet"
       href="https://unpkg.com/bootstrap-table@1.20.0/dist/bootstrap-table.min.css"
     />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/static/css/styles.css" />
     <title>Organisasjoner</title>
   </head>
   <body>
-    <div id="main" class="container">
+    <div id="main" class="container-fluid">
       <nav class="navbar navbar-expand-lg navbar-light bg-light-blue fw-bold">
-        <div class="container-fluid">
+        <div class="container">
           <button
             class="navbar-toggler"
             type="button"
@@ -48,28 +48,35 @@
           </div>
         </div>
       </nav>
-      <div class="container">
+      <div class="container-fluid" style="width: 80%;">
         <div class="row">
-          <div class="col-2">test</div>
-          <div class="col-8">
+          <div class="col-12">
             <table
               id="table"
               data-pagination="true"
               data-search="true"
               data-advanced-search="true"
               data-id-table="advancedTable"
-              data-url="json/data1.json"
+              data-url="/api/organisasjoner"
+              data-locale="nb-NO"
             >
               <thead>
                 <tr>
                   <th data-field="id" data-sortable="true">ID</th>
-                  <th data-field="name" data-sortable="true">Item Name</th>
-                  <th data-field="price" data-sortable="true">Item Price</th>
+                  <th data-field="navn" data-sortable="true">navn</th>
+                  <th data-field="orgnr" data-sortable="true">Organisasjons nummer</th>
+                  <th data-field="ansatte" data-sortable="true">Ansatte</th>
+                  <th data-field="kommune_navn" data-sortable="true">Kommune</th>
+                  <th data-field="orgformkode" data-sortable="true">orgformkode_id</th>
+                  <th data-field="instsektorkode" data-sortable="true">instsektorkode_id</th>
+                  <th data-field="naeringskode" data-sortable="true">naeringskode_id</th>
+                  <th data-field="stiftelsedato" data-sortable="true">stiftelsedato</th>
+                  <th data-field="regdato" data-sortable="true">regdato</th>
+
                 </tr>
               </thead>
             </table>
           </div>
-          <div class="col-2">test</div>
         </div>
       </div>
     </div>
@@ -82,6 +89,7 @@
     ></script>
     <script src="https://unpkg.com/bootstrap-table@1.20.0/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.20.0/dist/extensions/toolbar/bootstrap-table-toolbar.min.js"></script>
-    <script src="/table.js"></script>
+    <script src="/locale"></script>
+    <script src="/static/js/table.js"></script>
   </body>
 </html>

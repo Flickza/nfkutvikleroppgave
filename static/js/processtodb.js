@@ -1,7 +1,7 @@
 import convertxlsx from './xlsxtoarray.js';
 import mysql from 'mysql';
 import fetch from 'node-fetch';
-import { DB_USERNAME, DB_PASSWORD } from '../dbconfig.js';
+import { DB_USERNAME, DB_PASSWORD } from '../../dbconfig.js';
 
 //database configuration
 var con = mysql.createConnection({
@@ -71,7 +71,7 @@ var main = async (orgData) => {
     };
     if (!orgData.hasOwnProperty('naeringskode1') || !orgData.hasOwnProperty('institusjonellSektorkode')) {
         if (orgData.hasOwnProperty('slettedato') && orgData.slettedato != null) {
-            koder("orgform",
+            koder("orgformkode",
                 orgData.organisasjonsform.kode,
                 orgData.organisasjonsform.beskrivelse,
                 function (result) {
@@ -96,7 +96,7 @@ var main = async (orgData) => {
                 koder("instsektorkode", orgData.institusjonellSektorkode.kode, orgData.institusjonellSektorkode.beskrivelse, function (result) {
                     config.instsektor_id = result;
                     //organisasjonsform
-                    koder("orgform", orgData.organisasjonsform.kode, orgData.organisasjonsform.beskrivelse, function (result) {
+                    koder("orgformkode", orgData.organisasjonsform.kode, orgData.organisasjonsform.beskrivelse, function (result) {
                         config.orgform_id = result;
                         //land
                         land(orgData.forretningsadresse.landkode, orgData.forretningsadresse.land, function (result) {
@@ -169,14 +169,14 @@ var kommune_select_insert = (kommune_nr, kommune_navn, callback) => {
 //orgform, instsektorkode, naeringskode
 var koder = (title, kode, beskrivelse, callback) => {
     //execute main query
-    con.query(`SELECT id FROM ${title} WHERE kode='${kode}' AND beskrivelse='${beskrivelse}'`, function (err, result) {
+    con.query(`SELECT id FROM ${title} WHERE ${title}='${kode}' AND ${title}_beskrivelse='${beskrivelse}'`, function (err, result) {
         //throw error if error
         if (err) throw err;
 
         //if row was not found | id not selected
         //insert the row and return the id
         if (result.length == 0) {
-            con.query(`REPLACE INTO ${title} (kode, beskrivelse) VALUES ('${kode}', '${beskrivelse}')`, function (err, result) {
+            con.query(`REPLACE INTO ${title} (${title}, ${title}_beskrivelse) VALUES ('${kode}', '${beskrivelse}')`, function (err, result) {
                 //throw error if error
                 if (err) throw err;
                 console.log(`${title}_id found: ` + result.insertId);
