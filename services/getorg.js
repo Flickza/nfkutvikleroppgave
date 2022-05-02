@@ -13,6 +13,7 @@ var con = mysql.createPool({
 
 var getOrgs = async () => {
     return new Promise((resolve, reject) => {
+        //get all orgs data
         con.query(`SELECT * FROM org
             INNER JOIN orgformkode ON org.orgformkode_id = orgformkode.id
             INNER JOIN naeringskode ON org.naeringskode_id = naeringskode.id
@@ -22,6 +23,7 @@ var getOrgs = async () => {
             ORDER BY org.id ASC
             `, function (err, result, fields) {
             if (err) throw err;
+            //filter TINYINTS to readable string values
             result.filter((data) => {
                 if (data.konkurs == 1) {
                     data.konkurs = "JA";
@@ -40,6 +42,7 @@ var getOrgs = async () => {
                 }
             });
             var resultArray = [];
+            //reformat mysql response to fit datatable in html
             result.forEach((result) => {
                 resultArray.push({
                     "id": result.id,

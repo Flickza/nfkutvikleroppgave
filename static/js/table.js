@@ -1,12 +1,22 @@
+//import language
 $(async function () {
     //get html element with id table
     var $table = $("#table");
 
+    //fetch language from json file
+    var language = await fetch(`/locale`)
+        .then(response => {
+            if (response.ok) return response.json();
+            //if error throw error
+            else throw new Error(response.statusText);
+        })
+        .then(data => {return data});
+
     //get data from database
     var data = await fetch(`/api/organisasjoner`)
         .then(response => {
-            //if error throw error
             if (response.ok) return response.json();
+            //if error throw error
             else throw new Error(response.statusText);
         })
         .then(data => {
@@ -14,7 +24,7 @@ $(async function () {
             return data;
         });
 
-//function for expandable rows in table
+    //function for expandable rows in table
     function viewDetail(d, t) {
         var th = "";
         var td = "";
@@ -28,12 +38,12 @@ $(async function () {
             th += `<th>Instsektorkode</th><th>Beskrivelse</th>`;
             td += `<td>${d.instsektorkode}</td><td>${d.instsektorkode_beskrivelse}</td>`;
         }
-            //if orgform row is clicked show orgform data
+        //if orgform row is clicked show orgform data
         else if (t == "orgform") {
             th += `<th>orgform</th><th>Beskrivelse</th>`;
             td += `<td>${d.orgformkode}</td><td>${d.orgformkode_beskrivelse}</td>`;
         }
-            //if naeringskode row is clicked show naeringskode data
+        //if naeringskode row is clicked show naeringskode data
         else if (t == "naeringskode") {
             th += `<th>Næringskode</th><th>Beskrivelse</th>`;
             td += `<td>${d.naeringskode}</td><td>${d.naeringskode_beskrivelse}</td>`;
@@ -52,10 +62,11 @@ $(async function () {
         </tbody>
         </table>`;
     }
-//initiliaze table
+    //initiliaze table
     var dt = $table.DataTable({
         processing: true,
         data: data,
+        language: language,
         columns: [
 
             { "data": "orgnr" },

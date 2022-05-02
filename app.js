@@ -18,7 +18,7 @@ app.get('/api/organisasjoner', async function(req, res) {
 });
 
 app.get('/locale', function(req, res) {
-  res.sendFile('/node_modules/bootstrap-table/dist/locale/bootstrap-table-nb-NO.js', {root: "./" })
+  res.sendFile('/static/no-NB.json', {root: "./" })
 });
 app.use('/static', express.static('static'))
 
