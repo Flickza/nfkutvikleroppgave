@@ -87,78 +87,56 @@ var main = async (orgData) => {
         return;
     }
     if (orgData.hasOwnProperty('forretningsadresse')) {
-        kommune_select_insert(
-            orgData.forretningsadresse.kommunenummer,
-            orgData.forretningsadresse.kommune,
-            function (result) {
-                config.kommune_id = result;
-
-                //naeringskode
-                koder("naeringskode",
-                    orgData.naeringskode1.kode,
-                    orgData.naeringskode1.beskrivelse,
-                    function (result) {
-                        config.naering_id = result;
-                        //institusjonellSektorkode
-                        koder("instsektorkode",
-                            orgData.institusjonellSektorkode.kode,
-                            orgData.institusjonellSektorkode.beskrivelse,
-                            function (result) {
-                                config.instsektor_id = result;
-                                //organisasjonsform
-                                koder("orgform",
-                                    orgData.organisasjonsform.kode,
-                                    orgData.organisasjonsform.beskrivelse,
-                                    function (result) {
-
-                                        config.orgform_id = result;
-                                        //land
-                                        land(orgData.forretningsadresse.landkode,
-                                            orgData.forretningsadresse.land,
-                                            function (result) {
-                                                config.land_id = result;
-                                                //forretnings adresse poststed
-                                                poststed(orgData.forretningsadresse.postnummer,
-                                                    orgData.forretningsadresse.poststed,
-                                                    function (result) {
-                                                        config.forretning_poststed_id = result;
-                                                        //forretningsadresse
-                                                        adresser("forretningsadresse",
-                                                            orgData.forretningsadresse.adresse[0],
-                                                            config.forretning_poststed_id,
-                                                            config.land_id,
-                                                            function (result) {
-                                                                config.forretningsadresse_id = result;
-                                                                //organisasjon
-                                                                org(
-                                                                    orgData.organisasjonsnummer,
-                                                                    orgData.navn,
-                                                                    orgData.antallAnsatte,
-                                                                    config.orgform_id,
-                                                                    config.instsektor_id,
-                                                                    config.naering_id,
-                                                                    orgData.stiftelsesdato,
-                                                                    orgData.registreringsdatoEnhetsregisteret,
-                                                                    orgData.sisteInnsendteAarsregnskap,
-                                                                    orgData.konkurs,
-                                                                    orgData.underAvvikling,
-                                                                    orgData.underTvangsavviklingEllerTvangsopplosning,
-                                                                    orgData.registrertIFrivillighetsregisteret,
-                                                                    orgData.registrertIStiftelsesregisteret,
-                                                                    orgData.registrertIForetaksregisteret,
-                                                                    config.forretningsadresse_id,
-                                                                    config.kommune_id,
-                                                                    function (result) {
-                                                                        console.log(result);
-                                                                    }
-                                                                );
-                                                            });
-                                                    });
-                                            });
-                                    });
+        kommune_select_insert(orgData.forretningsadresse.kommunenummer, orgData.forretningsadresse.kommune, function (result) {
+            config.kommune_id = result;
+            //naeringskode
+            koder("naeringskode", orgData.naeringskode1.kode, orgData.naeringskode1.beskrivelse, function (result) {
+                config.naering_id = result;
+                //institusjonellSektorkode
+                koder("instsektorkode", orgData.institusjonellSektorkode.kode, orgData.institusjonellSektorkode.beskrivelse, function (result) {
+                    config.instsektor_id = result;
+                    //organisasjonsform
+                    koder("orgform", orgData.organisasjonsform.kode, orgData.organisasjonsform.beskrivelse, function (result) {
+                        config.orgform_id = result;
+                        //land
+                        land(orgData.forretningsadresse.landkode, orgData.forretningsadresse.land, function (result) {
+                            config.land_id = result;
+                            //forretnings adresse poststed
+                            poststed(orgData.forretningsadresse.postnummer, orgData.forretningsadresse.poststed, function (result) {
+                                config.forretning_poststed_id = result;
+                                //forretningsadresse
+                                adresser("forretningsadresse", orgData.forretningsadresse.adresse[0], config.forretning_poststed_id, config.land_id, function (result) {
+                                    config.forretningsadresse_id = result;
+                                    //organisasjon
+                                    org(
+                                        orgData.organisasjonsnummer,
+                                        orgData.navn,
+                                        orgData.antallAnsatte,
+                                        config.orgform_id,
+                                        config.instsektor_id,
+                                        config.naering_id,
+                                        orgData.stiftelsesdato,
+                                        orgData.registreringsdatoEnhetsregisteret,
+                                        orgData.sisteInnsendteAarsregnskap,
+                                        orgData.konkurs,
+                                        orgData.underAvvikling,
+                                        orgData.underTvangsavviklingEllerTvangsopplosning,
+                                        orgData.registrertIFrivillighetsregisteret,
+                                        orgData.registrertIStiftelsesregisteret,
+                                        orgData.registrertIForetaksregisteret,
+                                        config.forretningsadresse_id,
+                                        config.kommune_id,
+                                        function (result) {
+                                            console.log(result);
+                                        }
+                                    );
+                                });
                             });
+                        });
                     });
+                });
             });
+        });
     }
 };
 
@@ -171,7 +149,7 @@ var kommune_select_insert = (kommune_nr, kommune_navn, callback) => {
         //if row was not found | id not selected
         //insert the row and return the id
         if (result.length == 0) {
-            con.query(`INSERT INTO kommune (kommunenr, kommune_navn) VALUES ('${kommune_nr}', '${kommune_navn}')`, function (err, result) {
+            con.query(`REPLACE INTO kommune (kommunenr, kommune_navn) VALUES ('${kommune_nr}', '${kommune_navn}')`, function (err, result) {
                 //throw error if error
                 if (err) throw err;
 
@@ -198,7 +176,7 @@ var koder = (title, kode, beskrivelse, callback) => {
         //if row was not found | id not selected
         //insert the row and return the id
         if (result.length == 0) {
-            con.query(`INSERT INTO ${title} (kode, beskrivelse) VALUES ('${kode}', '${beskrivelse}')`, function (err, result) {
+            con.query(`REPLACE INTO ${title} (kode, beskrivelse) VALUES ('${kode}', '${beskrivelse}')`, function (err, result) {
                 //throw error if error
                 if (err) throw err;
                 console.log(`${title}_id found: ` + result.insertId);
@@ -223,7 +201,7 @@ var land = (landkode, land, callback) => {
         //if row was not found | id not selected
         //insert the row and return the id
         if (result.length == 0) {
-            con.query(`INSERT INTO land (landkode, land) VALUES ('${landkode}', '${land}')`, function (err, result) {
+            con.query(`REPLACE INTO land (landkode, land) VALUES ('${landkode}', '${land}')`, function (err, result) {
                 //throw error if error
                 if (err) throw err;
                 console.log("1 record inserted: land_id = " + result.insertId);
@@ -248,7 +226,7 @@ var poststed = (postnr, poststed, callback) => {
         //if row was not found | id not selected
         //insert the row and return the id
         if (result.length == 0) {
-            con.query(`INSERT INTO poststed (postnr, poststed) VALUES ('${postnr}', '${poststed}')`, function (err, result) {
+            con.query(`REPLACE INTO poststed (postnr, poststed) VALUES ('${postnr}', '${poststed}')`, function (err, result) {
                 //throw error if error
                 if (err) throw err;
                 console.log("poststed_id inserted: " + result.insertId);
@@ -369,3 +347,30 @@ var slettet_org = (orgnr, navn, slettedato, orgform_id, callback) => {
         }
     });
 };
+
+
+// var db_func = (table, select, columns, values, callback) => {
+//     //execute main query
+//     con.query(`SELECT id FROM ${table} WHERE ${select}='${orgnr}'`, function (err, result) {
+//         //throw error if error
+//         if (err) throw err;
+
+//         //if row was not found | id not selected
+//         //insert the row and return the id
+//         if (result.length == 0) {
+//             con.query(`INSERT INTO ${table}(${columns}) VALUES ('${values}')`, function (err, result) {
+//                 //throw error if error
+//                 if (err) throw err;
+
+//                 console.log(`1 ${table} inserted. id: ` + result.insertId);
+//                 //return id of inserted row
+//                 return callback(result.insertId);
+//             });
+//         } else {
+//             //if row was found | id selected
+//             //return id
+//             console.log(`${table} found. id: ` + result[0].id);
+//             return callback(result[0].id);
+//         }
+//     });
+// };
