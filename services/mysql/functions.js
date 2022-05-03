@@ -265,6 +265,7 @@ var getConfig = (kommune_nr, naeringskode, instsektorkode, orgformkode, landkode
         }
     });
 };
+
 var slettet_org = (orgnr, navn, slettedato, orgform_id, callback) => {
     //execute main query
     con.query(`SELECT id FROM org WHERE orgnr='${orgnr}'`, function (err, result) {

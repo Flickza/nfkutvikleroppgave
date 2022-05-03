@@ -13,7 +13,7 @@ var con = mysql.createPool({
 
 var getOrgs = async () => {
     return new Promise((resolve, reject) => {
-        //get all orgs data
+        //get all orgs that are not deleted data
         con.query(`SELECT * FROM org
             INNER JOIN orgformkode ON org.orgformkode_id = orgformkode.id
             INNER JOIN naeringskode ON org.naeringskode_id = naeringskode.id
@@ -49,6 +49,7 @@ var getOrgs = async () => {
                     "orgnr": result.orgnr,
                     "navn": result.navn,
                     "ansatte": result.ansatte,
+                    "slettedato": "-",
                     "orgformkode_id": {
                         "orgformkode": result.orgformkode,
                         "orgformkode_beskrivelse": result.orgformkode_beskrivelse,
@@ -64,12 +65,9 @@ var getOrgs = async () => {
                     "stiftelsedato": result.stiftelsedato,
                     "regdato": result.regdato,
                     "sistaarsregnskap": result.sistaarsregnskap,
-                    "status": {
-                        "text": `<i class="bi bi-info-circle"></i>`,
-                        "konkurs": result.konkurs,
-                        "under_avvikling": result.under_avvikling,
-                        "under_tvangsavvikling": result.under_tvangsavvikling,
-                    },
+                    "konkurs": result.konkurs,
+                    "under_avvikling": result.under_avvikling,
+                    "under_tvangsavvikling": result.under_tvangsavvikling,
                     "frivillighetsregisteret": result.frivillighetsregisteret,
                     "stiftelsesregisteret": result.stiftelsesregisteret,
                     "foretaksregisteret": result.foretaksregisteret,
@@ -84,7 +82,55 @@ var getOrgs = async () => {
                     }
                 });
             })
-            resolve(resultArray);
+            //get all deleted orgs
+            con.query(`SELECT * FROM org
+            INNER JOIN orgformkode ON org.orgformkode_id = orgformkode.id
+            WHERE org.slettedato IS NOT NULL
+            ORDER BY org.id ASC
+            `, function (err, result, fields) {
+            //reformat mysql response to fit datatable in html
+                result.forEach((result) => {
+                    resultArray.push({
+                        "id": result.id,
+                        "orgnr": result.orgnr,
+                        "navn": result.navn,
+                        "ansatte": "-",
+                        "slettedato": result.slettedato,
+                        "orgformkode_id": {
+                            "orgformkode": result.orgformkode,
+                            "orgformkode_beskrivelse": result.orgformkode_beskrivelse,
+                        },
+                        "instsektorkode_id": {
+                            "instsektorkode": "-",
+                            "instsektorkode_beskrivelse": "-"
+                        },
+                        "naeringskode_id": {
+                            "naeringskode": "-",
+                            "naeringskode_beskrivelse": "-"
+                        },
+                        "stiftelsedato": "-",
+                        "regdato": "-",
+                        "sistaarsregnskap":"-",
+                        "konkurs": "-",
+                        "under_avvikling": "-",
+                        "under_tvangsavvikling": "-",
+                        "frivillighetsregisteret": "-",
+                        "stiftelsesregisteret": "-",
+                        "foretaksregisteret": "-",
+                        "kommune_nr_id": {
+                            "kommunenr": "-",
+                            "kommune_navn": "-",
+                        },
+                        "forretningsadresse_id": {
+                            "adresse": "-",
+                            "poststed_id": "-",
+                            "land_id": "-"
+                        }
+                    });
+                })
+                //return complete array of orgs
+                resolve(resultArray);
+            });
         });
     });
 }

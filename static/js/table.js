@@ -1,4 +1,3 @@
-//import language
 $(async function () {
     //get html element with id table
     var $table = $("#table");
@@ -10,7 +9,7 @@ $(async function () {
             //if error throw error
             else throw new Error(response.statusText);
         })
-        .then(data => {return data});
+        .then(data => { return data });
 
     //get data from database
     var data = await fetch(`/api/organisasjoner`)
@@ -28,19 +27,14 @@ $(async function () {
     function viewDetail(d, t) {
         var th = "";
         var td = "";
-        //if status row is clicked show status data
-        if (t == "status") {
-            th += `<th>Konkurs</th><th>Under Avvikling</th><th>Under Tvangsavvikling</th>`;
-            td += `<td>${d.konkurs}</td><td>${d.under_avvikling}</td><td>${d.under_tvangsavvikling}</td>`;
-        }
         //if instsektorkode row is clicked show data
-        else if (t == "instsektorkode") {
+        if (t == "instsektorkode") {
             th += `<th>Instsektorkode</th><th>Beskrivelse</th>`;
             td += `<td>${d.instsektorkode}</td><td>${d.instsektorkode_beskrivelse}</td>`;
         }
         //if orgform row is clicked show orgform data
         else if (t == "orgform") {
-            th += `<th>orgform</th><th>Beskrivelse</th>`;
+            th += `<th>Organisasjons form</th><th>Beskrivelse</th>`;
             td += `<td>${d.orgformkode}</td><td>${d.orgformkode_beskrivelse}</td>`;
         }
         //if naeringskode row is clicked show naeringskode data
@@ -49,53 +43,76 @@ $(async function () {
             td += `<td>${d.naeringskode}</td><td>${d.naeringskode_beskrivelse}</td>`;
         }
         //return html when generated
-        return `<table class="table display">
-        <thead>
-        <tr>
-        ${th}
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-        ${td}
-        </tr>
-        </tbody>
-        </table>`;
+        return `
+        <table class="table table-striped display table-bordered">
+        <thead><tr>${th}</tr></thead>
+        <tbody><tr>${td}</tr></tbody></table>`;
     }
     //initiliaze table
     var dt = $table.DataTable({
+        dom: 'Blfrtip',
         processing: true,
         data: data,
         language: language,
         columns: [
-
             { "data": "orgnr" },
             { "data": "navn" },
-            { "data": "ansatte" },
             { "data": "kommune_nr_id.kommune_navn" },
+            { "data": "ansatte" },
+            { "data": "stiftelsedato" },
+            { "data": "regdato" },
+            { "data": "slettedato" },
+            { "data": "konkurs" },
+            { "data": "under_avvikling" },
+            { "data": "under_tvangsavvikling" },
             {
                 "class": `details-control orgform`,
-                "orderable": false,
+                "orderable": true,
                 "data": "orgformkode_id.orgformkode",
             },
             {
                 "class": "details-control instsektorkode",
-                "orderable": false,
+                "orderable": true,
                 "data": "instsektorkode_id.instsektorkode",
             },
             {
                 "class": "details-control naeringskode",
-                "orderable": false,
+                "orderable": true,
                 "data": "naeringskode_id.naeringskode",
             },
-            { "data": "stiftelsedato" },
-            { "data": "regdato" },
+        ],
+        buttons: [
             {
-                "class": "details-control status",
-                "orderable": false,
-                "data": "status.text",
+                extend: 'collection',
+                text: 'Export',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        charset: 'UTF-8',
+                        bom: true,
+                        filename: 'Organisasjoner',
+                        title: 'Organisasjoner'
+                    },
+                    {
+                        extend: 'csv',
+                        charset: 'UTF-8',
+                        fieldSeparator: ',',
+                        bom: true,
+                        filename: 'Organisasjoner',
+                        title: 'Organisasjoner'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        download: 'open',
+                        text: 'PDF',
+                    },
+                ]
             },
         ],
+        "lengthChange": true,
+        "lengthMenu": [[15, 30, 50, 100, 5000], [15, 30, 50, 100, "Alle"]],
+        "pageLength": 15,
+        aaSorting: [[1, "asc"]],
     });
 
     // Array to track the ids of the details displayed rows
@@ -116,7 +133,6 @@ $(async function () {
         }
         else {
             tr.addClass('details');
-            if ($(this).hasClass("status")) row.child(viewDetail(row.data().status, "status")).show();
             if ($(this).hasClass("orgform")) row.child(viewDetail(row.data().orgformkode_id, "orgform")).show();
             if ($(this).hasClass("instsektorkode")) row.child(viewDetail(row.data().instsektorkode_id, "instsektorkode")).show();
             if ($(this).hasClass("naeringskode")) row.child(viewDetail(row.data().naeringskode_id, "naeringskode")).show();
