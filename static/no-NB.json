@@ -21,7 +21,7 @@
         "fill": "Fyll alle celler med <i>%d<\/i>"
     },
     "buttons": {
-        "colvisRestore": "Gjennopprett synlighet",
+        "colvisRestore": "Vis alle",
         "copy": "Kopier",
         "copySuccess": {
             "_": "Kopierte %ds rader til utklippstavle",

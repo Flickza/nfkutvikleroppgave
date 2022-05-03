@@ -2,9 +2,10 @@ $(async function () {
     //get html element with id table
     var $table = $("#table");
 
+    //create search fields for each column
     $('#table thead tr.sFields th').each(function () {
         var title = $(this).text();
-        $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Søk ' + title + '" />');
+        $(this).html('<input type="text" class="form-control form-control-sm column_search" placeholder="Søk ' + title + '" />');
     });
 
     //fetch language from json file
@@ -49,7 +50,7 @@ $(async function () {
         }
         //return html when generated
         return `
-        <table class="table table-striped display table-bordered">
+        <table class="table display table-bordered">
         <thead><tr>${th}</tr></thead>
         <tbody><tr>${td}</tr></tbody></table>`;
     }
@@ -89,7 +90,8 @@ $(async function () {
         buttons: [
             {
                 extend: 'colvis',
-                columns: ':not(.noVis)'
+                columns: ':not(.noVis)',
+                postfixButtons: ['colvisRestore'],
             },
             {
                 extend: 'collection',
@@ -100,7 +102,10 @@ $(async function () {
                         charset: 'UTF-8',
                         bom: true,
                         filename: 'Organisasjoner',
-                        title: 'Organisasjoner'
+                        title: 'Organisasjoner',
+                        exportOptions: {
+                            columns: ":visible",
+                        }
                     },
                     {
                         extend: 'csv',
@@ -108,7 +113,10 @@ $(async function () {
                         fieldSeparator: ',',
                         bom: true,
                         filename: 'Organisasjoner',
-                        title: 'Organisasjoner'
+                        title: 'Organisasjoner',
+                        exportOptions: {
+                            columns: ":visible",
+                        }
                     },
                     {
                         extend: 'pdfHtml5',
@@ -116,7 +124,9 @@ $(async function () {
                         text: 'PDF',
                         orientation: 'landscape',
                         pageSize: 'A3',
-
+                        exportOptions: {
+                            columns: ":visible",
+                        }
                     },
                 ]
             },
@@ -131,73 +141,64 @@ $(async function () {
                 className: 'noVis'
             }
         ],
-        initComplete: function () {
-            // Apply the search
-            this.api().columns().every(function () {
-                var that = this;
-                console.log(that);
-                $('thead tr.sFields input').on('keyup change clear', function () {
-                    // console.log(this.value);
-                    console.log(that.search());
-                    if (that.search() !== this.value) {
-                        that
-                            .search(this.value)
-                            .draw();
-                    }
-                });
-            });
+});
+
+$('#table thead').on('keyup', ".column_search", function () {
+    dt
+        .column($(this).parent().index())
+        .search(this.value)
+        .draw();
+});
+//export buttons to custom toolbar element
+dt.buttons().container().appendTo('.toolbarexport');
+$('#table_filter').detach().appendTo('.toolbarfilter');
+
+//set css of exported buttons
+$(".toolbarfilter").find("label").css("width", "100%");
+
+//modify classes from DataTables library
+$(".toolbarfilter").find("input").removeClass("form-control-sm");
+$(".toolbarfilter").find("input").attr("placeholder", "Søk i alle rader...");
+
+//set css of export button
+$(".toolbarexport").find("button").addClass("ml-1");
+
+
+// Array to track the ids of the details displayed rows
+var detailRows = [];
+
+//function to show/hide collapsable rows
+$('#table tbody').on('click', 'tr td.details-control', function () {
+    var tr = $(this).closest('tr');
+    var row = dt.row(tr);
+    var idx = $.inArray(tr.attr('id'), detailRows);
+
+    if (row.child.isShown()) {
+        tr.removeClass('details');
+        row.child.hide();
+
+        // Remove from the 'open' array
+        detailRows.splice(idx, 1);
+    }
+    else {
+        tr.addClass('details');
+        //check what row is clicked to give the right view data
+        if ($(this).hasClass("orgform")) row.child(viewDetail(row.data().orgformkode_id, "orgform")).show();
+        if ($(this).hasClass("instsektorkode")) row.child(viewDetail(row.data().instsektorkode_id, "instsektorkode")).show();
+        if ($(this).hasClass("naeringskode")) row.child(viewDetail(row.data().naeringskode_id, "naeringskode")).show();
+
+        // Add to the 'open' array
+        if (idx === -1) {
+            detailRows.push(tr.attr('id'));
         }
+    }
+});
+
+// On each draw, loop over the `detailRows` array and show any child rows
+dt.on('draw', function () {
+    $.each(detailRows, function (i, id) {
+        $('#' + id + ' td.details-control').trigger('click');
     });
-
-    //export buttons to custom toolbar element
-    dt.buttons().container().appendTo('.toolbarexport');
-    $('#table_filter').detach().appendTo('.toolbarfilter');
-
-    //set css of exported buttons
-    $(".toolbarfilter").find("label").css("width", "100%");
-
-    //modify classes from DataTables library
-    $(".toolbarfilter").find("input").removeClass("form-control-sm");
-    $(".toolbarfilter").find("input").attr("placeholder", "Søk...");
-
-    //set css of export button
-    $(".toolbarexport").find("button").removeClass("btn-secondary").addClass("btn-primary");
-
-
-    // Array to track the ids of the details displayed rows
-    var detailRows = [];
-
-    //function to show/hide collapsable rows
-    $('#table tbody').on('click', 'tr td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = dt.row(tr);
-        var idx = $.inArray(tr.attr('id'), detailRows);
-
-        if (row.child.isShown()) {
-            tr.removeClass('details');
-            row.child.hide();
-
-            // Remove from the 'open' array
-            detailRows.splice(idx, 1);
-        }
-        else {
-            tr.addClass('details');
-            if ($(this).hasClass("orgform")) row.child(viewDetail(row.data().orgformkode_id, "orgform")).show();
-            if ($(this).hasClass("instsektorkode")) row.child(viewDetail(row.data().instsektorkode_id, "instsektorkode")).show();
-            if ($(this).hasClass("naeringskode")) row.child(viewDetail(row.data().naeringskode_id, "naeringskode")).show();
-
-            // Add to the 'open' array
-            if (idx === -1) {
-                detailRows.push(tr.attr('id'));
-            }
-        }
-    });
-
-    // On each draw, loop over the `detailRows` array and show any child rows
-    dt.on('draw', function () {
-        $.each(detailRows, function (i, id) {
-            $('#' + id + ' td.details-control').trigger('click');
-        });
-    });
+});
 
 });
