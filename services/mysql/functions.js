@@ -339,7 +339,6 @@ var slaveInsert = (orgData) => {
 //function to insert data
 var mainInsert = (orgData) => {
     var adresse;
-    console.log(orgData);
     if (orgData.hasOwnProperty('forretningsadresse')) adresse = orgData.forretningsadresse;
     if (orgData.hasOwnProperty('postadresse')) adresse = orgData.postadresse;
 

@@ -66,14 +66,14 @@ con.connect(function (err) {
     console.log("Connected!");
 });
 
-const main = (data) => {
-    // console.log("Inserting slave data...");
-    // for (data in result) {
-    //     slaveInsert(result[data]);
-    // }
-    // console.log("Inserting slave data complete.");
+const main = () => {
+    console.log("Inserting slave data...");
+    for (var data in result) {
+        slaveInsert(result[data]);
+    }
+    console.log("Inserting slave data complete.");
     console.log("Inserting main data...");
-    for (data in result) {
+    for (var data in result) {
         mainInsert(result[data]);
     }
     console.log("Inserting main data complete.");
@@ -81,4 +81,4 @@ const main = (data) => {
 
 }
 
-main(result);
+main();

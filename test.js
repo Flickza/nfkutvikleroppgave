@@ -40,4 +40,16 @@ async function result() {
     });
 }
 
-result()
+// result()
+
+
+fs.readFile('C:/Users/Adel/nfkutvikleroppgave/user.json', 'utf8' , (err, data) => {
+    if (err) {
+      console.error(err);
+      return
+    }
+    var array = JSON.parse(data);
+    var check1 = array.filter(e => e != null);
+    var check2 = check1.filter(e => e != undefined);
+    console.log(check2.filter(e => e.organisasjonsnummer > 1).length);
+});
