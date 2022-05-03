@@ -294,13 +294,15 @@ var slettet_org = (orgnr, navn, slettedato, orgform_id, callback) => {
 
 //function to slave data to database
 var slaveInsert = async (orgData) => {
-    if (!orgData.hasOwnProperty('naeringskode1') || !orgData.hasOwnProperty('institusjonellSektorkode')) return;
+    if (!orgData.hasOwnProperty('naeringskode1') || !orgData.hasOwnProperty('institusjonellSektorkode') || !orgData.hasOwnProperty('organisasjonsform')) return;
     var adresse;
     if (orgData.hasOwnProperty('forretningsadresse')) adresse = orgData.forretningsadresse;
     if (orgData.hasOwnProperty('postadresse')) adresse = orgData.postadresse;
-    kommune_select_insert(adresse.kommunenummer, adresse.kommune, function (result) {
-        console.log(result);
-    });
+    if (adresse.hasOwnProperty('kommunenummer') && adresse.hasOwnProperty('kommune')) {
+        kommune_select_insert(adresse.kommunenummer, adresse.kommune, function (result) {
+            console.log(result);
+        });
+    }
     //naeringskode
     if (orgData.hasOwnProperty('naeringskode1')) {
         koder("naeringskode", orgData.naeringskode1.kode, orgData.naeringskode1.beskrivelse, function (result) {
@@ -314,7 +316,7 @@ var slaveInsert = async (orgData) => {
         });
     }
     //organisasjonsform
-    if (orgData.hasOwnProperty('institusjonellSektorkode')) {
+    if (orgData.hasOwnProperty('organisasjonsform')) {
         koder("orgformkode", orgData.organisasjonsform.kode, orgData.organisasjonsform.beskrivelse, function (result) {
             console.log(result);
         });

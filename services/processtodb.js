@@ -23,6 +23,35 @@ con.connect(function (err) {
 
 var unhandled = [];
 var errors = [];
+// for (let i = 0; i < orgliste.length; i++) {
+//     (async () => {
+//         try {
+//             await fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${orgliste[i]}`)
+//                 .then(response => {
+//                     if (response.ok) return response.json();
+//                     if (!response.ok) {
+//                         unhandled.push(orgliste[i]);
+//                         return;
+//                     };
+//                 })
+//                 .then(async orgData => {
+//                     if (await orgData != undefined) {
+//                         await slaveInsert(orgData);
+//                         return;
+//                     } else {
+//                         unhandled.push(orgliste[i]);
+//                         return;
+//                     }
+//                 });
+//         } catch (error) {
+//             if (error.errno == "ETTIMEDOUT") {
+//                 unhandled.push(orgliste[i]);
+//                 errors.push(error.errno);
+//                 throw error;
+//             }
+//         }
+//     })();
+// }
 for (let i = 0; i < orgliste.length; i++) {
     (async () => {
         try {
@@ -47,6 +76,7 @@ for (let i = 0; i < orgliste.length; i++) {
             if (error.errno == "ETTIMEDOUT") {
                 unhandled.push(orgliste[i]);
                 errors.push(error.errno);
+                throw error;
             }
         }
     })();
@@ -59,15 +89,17 @@ var main = async (orgData) => {
     var adresse;
     if (orgData.hasOwnProperty('forretningsadresse')) adresse = orgData.forretningsadresse;
     if (orgData.hasOwnProperty('postadresse')) adresse = orgData.postadresse;
-    //kommune_nr, naeringskode, instsektorkode, orgformkode, landkode, postnr, callback
-    getConfig(adresse.kommunenummer, orgData.naeringskode1.kode, orgData.institusjonellSektorkode.kode, orgData.organisasjonsform.kode, adresse.landkode, adresse.postnummer, function (result) {
-        if (orgData.hasOwnProperty('slettedato') && orgData.slettedato != null) {
-            slettet_org(orgData.organisasjonsnummer, orgData.navn, orgData.slettedato, config.orgform_id, function (result) {
+    if (orgData.hasOwnProperty('slettedato') && orgData.slettedato != null) {
+        koder("orgformkode", orgData.organisasjonsform.kode, orgData.organisasjonsform.beskrivelse, function (result) {
+            slettet_org(orgData.organisasjonsnummer, orgData.navn, orgData.slettedato, result, function (result) {
                 console.log(result);
             });
-        } else {
+        });
+    } else {
+
+        //kommune_nr, naeringskode, instsektorkode, orgformkode, landkode, postnr, callback
+        getConfig(adresse.kommunenummer, orgData.naeringskode1.kode, orgData.institusjonellSektorkode.kode, orgData.organisasjonsform.kode, adresse.landkode, adresse.postnummer, function (result) {
             var config = result;
-            console.log(config);
             adresser("forretningsadresse", adresse.adresse[0], config.forretning_poststed_id, config.land_id, function (result) {
                 config.forretningsadresse_id = result;
                 //organisasjon
@@ -93,6 +125,6 @@ var main = async (orgData) => {
                         console.log(result);
                     });
             });
-        }
-    });
+        });
+    }
 };
