@@ -2,7 +2,7 @@ import convertxlsx from '../static/js/xlsxtoarray.js';
 import mysql from 'mysql';
 import fetch from 'node-fetch';
 import { DB_USERNAME, DB_PASSWORD } from '../dbconfig.js';
-import { kommune_select_insert, koder, land, poststed, adresser, org, slettet_org, slaveInsert, getConfig } from './mysql/functions.js';
+import { slaveInsert, mainInsert } from './mysql/functions.js';
 
 //database configuration
 var con = mysql.createConnection({
@@ -13,7 +13,52 @@ var con = mysql.createConnection({
 });
 
 //convert xlsx file to readable array of Org numbers
-var orgliste = convertxlsx("organisasjonsnumre.xlsx");
+var liste = convertxlsx("organisasjonsnumre.xlsx");
+
+//fetch all data from api for list
+async function forFetch(orgliste) {
+    let batch = [];
+    var requests = 0;
+    console.time("time");
+    for (let orgnr of orgliste) {
+        requests = 0;
+        var data = fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${orgnr}`)
+            .then(async res => {
+                if (res.ok) return res.json();
+                // check for error response
+                if (!res.ok) {
+                    // get error message from body or default to response status
+                    const error = res.status;
+                    return Promise.reject(error);
+                }
+            })
+            .then(res => {
+                requests++;
+                // console.log("getting data...", requests);
+                return Promise.resolve(res);
+            })
+            .catch(error => {
+                requests++;
+                // console.error('There was an error!', requests);
+            });
+        batch.push(data);
+    }
+
+    let batchResults = await Promise.all(batch);
+
+    let undefinedResult = batchResults.filter(element => element == undefined);
+    let result = batchResults.filter(element => element != undefined);
+    console.log("undefinedResult", undefinedResult.length);
+    console.log("result", result.length);
+    return result;
+}
+
+
+var firstBatch = await forFetch(liste.splice(0, liste.length / 2));
+var secondBatch = await forFetch(liste.splice(liste.length / 2, liste.length));
+
+var result = [...firstBatch, ...secondBatch];
+console.log(result.length);
 
 //connect and execute querys
 con.connect(function (err) {
@@ -21,110 +66,19 @@ con.connect(function (err) {
     console.log("Connected!");
 });
 
-var unhandled = [];
-var errors = [];
-// for (let i = 0; i < orgliste.length; i++) {
-//     (async () => {
-//         try {
-//             await fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${orgliste[i]}`)
-//                 .then(response => {
-//                     if (response.ok) return response.json();
-//                     if (!response.ok) {
-//                         unhandled.push(orgliste[i]);
-//                         return;
-//                     };
-//                 })
-//                 .then(async orgData => {
-//                     if (await orgData != undefined) {
-//                         await slaveInsert(orgData);
-//                         return;
-//                     } else {
-//                         unhandled.push(orgliste[i]);
-//                         return;
-//                     }
-//                 });
-//         } catch (error) {
-//             if (error.errno == "ETTIMEDOUT") {
-//                 unhandled.push(orgliste[i]);
-//                 errors.push(error.errno);
-//                 throw error;
-//             }
-//         }
-//     })();
-// }
-for (let i = 0; i < orgliste.length; i++) {
-    (async () => {
-        try {
-            await fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${orgliste[i]}`)
-                .then(response => {
-                    if (response.ok) return response.json();
-                    if (!response.ok) {
-                        unhandled.push(orgliste[i]);
-                        return;
-                    };
-                })
-                .then(async orgData => {
-                    if (await orgData != undefined) {
-                        await main(orgData);
-                        return;
-                    } else {
-                        unhandled.push(orgliste[i]);
-                        return;
-                    }
-                });
-        } catch (error) {
-            if (error.errno == "ETTIMEDOUT") {
-                unhandled.push(orgliste[i]);
-                errors.push(error.errno);
-                throw error;
-            }
-        }
-    })();
+const main = (data) => {
+    // console.log("Inserting slave data...");
+    // for (data in result) {
+    //     slaveInsert(result[data]);
+    // }
+    // console.log("Inserting slave data complete.");
+    console.log("Inserting main data...");
+    for (data in result) {
+        mainInsert(result[data]);
+    }
+    console.log("Inserting main data complete.");
+
+
 }
 
-
-//function to insert data
-var main = async (orgData) => {
-    await orgData;
-    var adresse;
-    if (orgData.hasOwnProperty('forretningsadresse')) adresse = orgData.forretningsadresse;
-    if (orgData.hasOwnProperty('postadresse')) adresse = orgData.postadresse;
-    if (orgData.hasOwnProperty('slettedato') && orgData.slettedato != null) {
-        koder("orgformkode", orgData.organisasjonsform.kode, orgData.organisasjonsform.beskrivelse, function (result) {
-            slettet_org(orgData.organisasjonsnummer, orgData.navn, orgData.slettedato, result, function (result) {
-                console.log(result);
-            });
-        });
-    } else {
-
-        //kommune_nr, naeringskode, instsektorkode, orgformkode, landkode, postnr, callback
-        getConfig(adresse.kommunenummer, orgData.naeringskode1.kode, orgData.institusjonellSektorkode.kode, orgData.organisasjonsform.kode, adresse.landkode, adresse.postnummer, function (result) {
-            var config = result;
-            adresser("forretningsadresse", adresse.adresse[0], config.forretning_poststed_id, config.land_id, function (result) {
-                config.forretningsadresse_id = result;
-                //organisasjon
-                org(
-                    orgData.organisasjonsnummer,
-                    orgData.navn,
-                    orgData.antallAnsatte,
-                    config.orgform_id,
-                    config.instsektor_id,
-                    config.naering_id,
-                    orgData.stiftelsesdato,
-                    orgData.registreringsdatoEnhetsregisteret,
-                    orgData.sisteInnsendteAarsregnskap,
-                    orgData.konkurs,
-                    orgData.underAvvikling,
-                    orgData.underTvangsavviklingEllerTvangsopplosning,
-                    orgData.registrertIFrivillighetsregisteret,
-                    orgData.registrertIStiftelsesregisteret,
-                    orgData.registrertIForetaksregisteret,
-                    config.forretningsadresse_id,
-                    config.kommune_id,
-                    function (result) {
-                        console.log(result);
-                    });
-            });
-        });
-    }
-};
+main(result);
