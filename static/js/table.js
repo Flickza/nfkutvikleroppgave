@@ -2,6 +2,11 @@ $(async function () {
     //get html element with id table
     var $table = $("#table");
 
+    $('#table thead tr.sFields th').each(function () {
+        var title = $(this).text();
+        $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Søk ' + title + '" />');
+    });
+
     //fetch language from json file
     var language = await fetch(`/locale`)
         .then(response => {
@@ -83,8 +88,12 @@ $(async function () {
         ],
         buttons: [
             {
+                extend: 'colvis',
+                columns: ':not(.noVis)'
+            },
+            {
                 extend: 'collection',
-                text: 'Export',
+                text: 'Eksport',
                 buttons: [
                     {
                         extend: 'excelHtml5',
@@ -105,6 +114,9 @@ $(async function () {
                         extend: 'pdfHtml5',
                         download: 'open',
                         text: 'PDF',
+                        orientation: 'landscape',
+                        pageSize: 'A3',
+
                     },
                 ]
             },
@@ -113,7 +125,44 @@ $(async function () {
         "lengthMenu": [[15, 30, 50, 100, 5000], [15, 30, 50, 100, "Alle"]],
         "pageLength": 15,
         aaSorting: [[1, "asc"]],
+        columnDefs: [
+            {
+                targets: 1,
+                className: 'noVis'
+            }
+        ],
+        initComplete: function () {
+            // Apply the search
+            this.api().columns().every(function () {
+                var that = this;
+                console.log(that);
+                $('thead tr.sFields input').on('keyup change clear', function () {
+                    // console.log(this.value);
+                    console.log(that.search());
+                    if (that.search() !== this.value) {
+                        that
+                            .search(this.value)
+                            .draw();
+                    }
+                });
+            });
+        }
     });
+
+    //export buttons to custom toolbar element
+    dt.buttons().container().appendTo('.toolbarexport');
+    $('#table_filter').detach().appendTo('.toolbarfilter');
+
+    //set css of exported buttons
+    $(".toolbarfilter").find("label").css("width", "100%");
+
+    //modify classes from DataTables library
+    $(".toolbarfilter").find("input").removeClass("form-control-sm");
+    $(".toolbarfilter").find("input").attr("placeholder", "Søk...");
+
+    //set css of export button
+    $(".toolbarexport").find("button").removeClass("btn-secondary").addClass("btn-primary");
+
 
     // Array to track the ids of the details displayed rows
     var detailRows = [];
