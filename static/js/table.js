@@ -199,48 +199,56 @@ $(async function () {
     });
 
     //filter date
-    $('#regyearStart').daterangepicker({
-        "singleDatePicker": true,
-        "showDropdowns": true,
-        "startDate": "01/01/1900",
-        "endDate": "01/01/2023",
-    }, function (start, end, label) {
-        $(this).val(start.format('YYYY-MM-DD'));
+    $(function () {
+        $('#regyearStart').daterangepicker({
+            locale: {
+                format: 'YYYY-MM-DD'
+            },
+            "singleDatePicker": true,
+            "showDropdowns": true,
+            "startDate": "1950-01-01",
+            "endDate": "2022-01-01",
+        }, function (start, end, label) {
+            $("#regyearStart").val(start.format('YYYY-MM-DD'));
+        });
+        $('#regyearEnd').daterangepicker({
+            locale: {
+                format: 'YYYY-MM-DD'
+            },
+            "singleDatePicker": true,
+            "showDropdowns": true,
+            "startDate": "2022-01-01",
+            "endDate": "2023-01-01",
+        }, function (start, end, label) {
+            $("#regyearEnd").val(start.format('YYYY-MM-DD'));
+        });
     });
-    $('#regyearEnd').daterangepicker({
-        "singleDatePicker": true,
-        "showDropdowns": true,
-        "startDate": "04/28/2022",
-        "endDate": "01/01/2023",
-    }, function (start, end, label) {
-        $(this).val(start.format('YYYY-MM-DD'));
-    });
 
-    $("#regyearStart").on('change'), function () {
-        var minDate = $('#regyearStart').val().format('YYYY-MM-DD');
-        var maxDate = $('#regyearEnd').val().format('YYYY-MM-DD');
-        console.log(minDate, maxDate);
-        // Custom filtering function which will search data in column four between two values
-        $.fn.dataTable.ext.search.push(
-            function (settings, data, dataIndex) {
-                var min = minDate.val();
-                var max = maxDate.val();
-                var date = new Date(data[5]);
+    //work in progress
+    // $("#regyearStart, #regyearEnd").on('change', function () {
+    //     var minDate = $('#regyearStart').val();
+    //     var maxDate = $('#regyearEnd').val();
+    //     console.log(minDate, maxDate);
+    //     // Custom filtering function which will search data in column four between two values
+    //     $.fn.dataTable.ext.search.push(
+    //         function (settings, data, dataIndex) {
+    //             var min = "2019-06-13";
+    //             var max = "2020-06-13";
+    //             var date = new Date(data[5]);
 
-                if (
-                    (min === null && max === null) ||
-                    (min === null && date <= max) ||
-                    (min <= date && max === null) ||
-                    (min <= date && date <= max)
-                ) {
-                    return true;
-                }
-                return false;
-            }
-        );
-        dt.draw();
-    }
-
+    //             if (
+    //                 (min === null && max === null) ||
+    //                 (min === null && date <= max) ||
+    //                 (min <= date && max === null) ||
+    //                 (min <= date && date <= max)
+    //             ) {
+    //                 return true;
+    //             }
+    //             return false;
+    //         }
+    //     );
+    //     dt.draw();
+    // });
     //filter ansatte between (not finished)
     $('#ansatteMin, #ansatteMax').on('keyup', function () {
         dt.draw();
