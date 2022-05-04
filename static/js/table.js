@@ -2,6 +2,8 @@ $(async function () {
     //get html element with id table
     var $table = $("#table");
 
+
+
     //create search fields for each column
     $('#table thead tr.sFields th').each(function () {
         var title = $(this).text();
@@ -141,64 +143,124 @@ $(async function () {
                 className: 'noVis'
             }
         ],
-});
-
-$('#table thead').on('keyup', ".column_search", function () {
-    dt
-        .column($(this).parent().index())
-        .search(this.value)
-        .draw();
-});
-//export buttons to custom toolbar element
-dt.buttons().container().appendTo('.toolbarexport');
-$('#table_filter').detach().appendTo('.toolbarfilter');
-
-//set css of exported buttons
-$(".toolbarfilter").find("label").css("width", "100%");
-
-//modify classes from DataTables library
-$(".toolbarfilter").find("input").removeClass("form-control-sm");
-$(".toolbarfilter").find("input").attr("placeholder", "Søk i alle rader...");
-
-//set css of export button
-$(".toolbarexport").find("button").addClass("ml-1");
-
-
-// Array to track the ids of the details displayed rows
-var detailRows = [];
-
-//function to show/hide collapsable rows
-$('#table tbody').on('click', 'tr td.details-control', function () {
-    var tr = $(this).closest('tr');
-    var row = dt.row(tr);
-    var idx = $.inArray(tr.attr('id'), detailRows);
-
-    if (row.child.isShown()) {
-        tr.removeClass('details');
-        row.child.hide();
-
-        // Remove from the 'open' array
-        detailRows.splice(idx, 1);
-    }
-    else {
-        tr.addClass('details');
-        //check what row is clicked to give the right view data
-        if ($(this).hasClass("orgform")) row.child(viewDetail(row.data().orgformkode_id, "orgform")).show();
-        if ($(this).hasClass("instsektorkode")) row.child(viewDetail(row.data().instsektorkode_id, "instsektorkode")).show();
-        if ($(this).hasClass("naeringskode")) row.child(viewDetail(row.data().naeringskode_id, "naeringskode")).show();
-
-        // Add to the 'open' array
-        if (idx === -1) {
-            detailRows.push(tr.attr('id'));
-        }
-    }
-});
-
-// On each draw, loop over the `detailRows` array and show any child rows
-dt.on('draw', function () {
-    $.each(detailRows, function (i, id) {
-        $('#' + id + ' td.details-control').trigger('click');
     });
-});
 
+    //individual column search handler
+    $('#table thead').on('keyup', ".column_search", function () {
+        dt
+            .column($(this).parent().index())
+            .search(this.value)
+            .draw();
+    });
+
+    //fill "kommune" search list with unique kommune names sorted alphabetically
+    dt.column(2).data().unique().sort().each(function (d, j) {
+        $("#kommuneCategories").append(`<option value="${d}">${d}</option>`);
+    });
+
+    //fill "organisasjonsform" search list with unique organisasjonsforms sorted alphabetically
+    dt.column(10).data().unique().sort().each(function (d, j) {
+        $("#orgformCategories").append(`<option value="${d}">${d}</option>`);
+    });
+
+    //fill "Naeringskode" search list with unique naeringskoder sorted Ascending
+    dt.column(12).data().unique().sort().each(function (d, j) {
+        $("#naeringskodeCategories").append(`<option value="${d}">${d}</option>`);
+    });
+
+    //make select dropdown search when an option is selected
+    $("#kommuneCategories").on("change", function () {
+        console.log(this.value);
+        dt.column(2).search(this.value).draw();
+    });
+    $("#orgformCategories").on("change", function () {
+        console.log(this.value);
+        dt.column(10).search(this.value).draw();
+    });
+    $("#naeringskodeCategories").on("change", function () {
+        console.log(this.value);
+        dt.column(12).search(this.value).draw();
+    });
+
+    //filter date
+    $(function () {
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+        }, function (start, end, label) {
+            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+            var minDateFilter = start.format('YYYY-MM-DD');
+            var maxDateFilter = end.format('YYYY-MM-DD');
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+                    var min = parseInt(minDateFilter, 10);
+                    var max = parseInt(maxDateFilter, 10);
+                    var age = parseFloat(data[5]) || 0; // use data for the age column
+        
+                    if ((isNaN(min) && isNaN(max)) ||
+                        (isNaN(min) && age <= max) ||
+                        (min <= age && isNaN(max)) ||
+                        (min <= age && age <= max)) {
+                        return true;
+                    }
+                    return false;
+                }
+            );
+            dt.draw();
+        });
+    });
+
+
+
+
+    //export buttons to custom toolbar element
+    dt.buttons().container().appendTo('.toolbarexport');
+    $('#table_filter').detach().appendTo('.toolbarfilter');
+
+    //set css of exported buttons
+    $(".toolbarfilter").find("label").css("width", "100%");
+
+    //modify classes from DataTables library
+    $(".toolbarfilter").find("input").removeClass("form-control-sm");
+    $(".toolbarfilter").find("input").attr("placeholder", "Søk i alle rader...");
+
+    //set css of export button
+    $(".toolbarexport").find("button").addClass("ml-1");
+
+
+    // Array to track the ids of the details displayed rows
+    var detailRows = [];
+
+    //function to show/hide collapsable rows
+    $('#table tbody').on('click', 'tr td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = dt.row(tr);
+        var idx = $.inArray(tr.attr('id'), detailRows);
+
+        if (row.child.isShown()) {
+            tr.removeClass('details');
+            row.child.hide();
+
+            // Remove from the 'open' array
+            detailRows.splice(idx, 1);
+        }
+        else {
+            tr.addClass('details');
+            //check what row is clicked to give the right view data
+            if ($(this).hasClass("orgform")) row.child(viewDetail(row.data().orgformkode_id, "orgform")).show();
+            if ($(this).hasClass("instsektorkode")) row.child(viewDetail(row.data().instsektorkode_id, "instsektorkode")).show();
+            if ($(this).hasClass("naeringskode")) row.child(viewDetail(row.data().naeringskode_id, "naeringskode")).show();
+
+            // Add to the 'open' array
+            if (idx === -1) {
+                detailRows.push(tr.attr('id'));
+            }
+        }
+    });
+
+    // On each draw, loop over the `detailRows` array and show any child rows
+    dt.on('draw', function () {
+        $.each(detailRows, function (i, id) {
+            $('#' + id + ' td.details-control').trigger('click');
+        });
+    });
 });

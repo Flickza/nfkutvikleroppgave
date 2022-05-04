@@ -19,18 +19,57 @@
       type="text/css"
       href="https://cdn.datatables.net/v/bs5/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/fh-3.2.2/r-2.2.9/sb-1.3.2/sp-2.0.0/datatables.min.css"
     />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <link rel="stylesheet" href="/static/css/styles.css" />
     <title>Organisasjoner</title>
   </head>
   <body>
     <div id="main" class="container-fluid" style="height: 100%">
-      <div class="container-fluid mt-5">
-        <div class="row toolrow d-flex align-items-center">
+      <div class="container-fluid mt-4">
+        <div class="row">
+          <div class="col-1"></div>
+          <div class="col-2">
+            Kommune:
+            <select
+              name="kommuneCategories"
+              class="form-control form-control-sm"
+              id="kommuneCategories"
+            >
+            <option value="">Alle</option></select>
+          </select></div>
+          <div class="col-2">
+            Organisasjonsform:
+            <select
+              name="orgformCategories"
+              class="form-control form-control-sm"
+              id="orgformCategories"
+            >
+          <option value="">Alle</option></select>
+          </div>
+          <div class="col-2">
+            Næringskode:
+            <select
+              name="naeringskodeCategories"
+              class="form-control form-control-sm"
+              id="naeringskodeCategories"
+            ></select>
+          </div>
+          <div class="col-2">
+            Velg regdato:
+            <input type="text" class="form-control form-control-sm" name="daterange" value="01/01/2000 - 01/01/2022" />
+          </div>
+          <div class="col-2">
+            Ansatte:
+            <input id="ex10" type="range" class="form-control" data-handle="custom"/>
+          </select>
+          </div>
+          <div class="col-1"></div>
+        </div>
+        <div class="row toolrow d-flex align-items-center mt-5">
           <div class="col-6"></div>
           <div class="col-3 toolbarfilter"></div>
-          <div class="col-2 toolbarexport">
-          </div>
+          <div class="col-2 toolbarexport"></div>
         </div>
       </div>
       <div class="container-fluid" style="width: 95%">
@@ -74,6 +113,7 @@
         </div>
       </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript">
       document.addEventListener("DOMContentLoaded", function () {
         /////// Prevent closing from click inside dropdown
@@ -85,7 +125,8 @@
       });
       // DOMContentLoaded  end
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
