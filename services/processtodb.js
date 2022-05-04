@@ -45,19 +45,20 @@ con.connect(function (err) {
     console.log("Connected!");
 });
 
-const main = (jsonData) => {
+const SLAVE = async (jsonData) => {
     console.log("Inserting slave data...");
     for (var data in jsonData) {
         slaveInsert(jsonData[data]);
     }
     console.log("Inserting slave data complete.");
-    console.log("Inserting main data...");
+}
+
+const MAIN = async (jsonData) => {
+    console.log("Inserting slave data...");
     for (var data in jsonData) {
         mainInsert(jsonData[data]);
     }
-    console.log("Inserting main data complete.");
-
-
+    console.log("Inserting slave data complete.");
 }
-
-main();
+await SLAVE(syncDataFromFile);
+await MAIN(syncDataFromFile);
