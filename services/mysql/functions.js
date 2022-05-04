@@ -232,7 +232,6 @@ var getConfig = (kommune_nr, naeringskode, instsektorkode, orgformkode, landkode
                                                 if (err) throw err;
                                                 if (result.length > 0) {
                                                     config.forretning_poststed_id = result[0].id;
-                                                    console.log(config);
                                                     return callback(config);
                                                 } else {
                                                     console.log("postnr not found");
