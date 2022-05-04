@@ -1,8 +1,24 @@
+
 $(async function () {
     //get html element with id table
     var $table = $("#table");
 
+    //filter for ansatte between x, y
+    $.fn.dataTable.ext.search.push(
+        function (settings, data, dataIndex) {
+            var min = parseInt($('#ansatteMin').val(), 10);
+            var max = parseInt($('#ansatteMax').val(), 10);
+            var ansatte = parseFloat(data[3]) || 0; // use data for the ansatte column
 
+            if ((isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && ansatte <= max) ||
+                (min <= ansatte && isNaN(max)) ||
+                (min <= ansatte && ansatte <= max)) {
+                return true;
+            }
+            return false;
+        }
+    );
 
     //create search fields for each column
     $('#table thead tr.sFields th').each(function () {
@@ -134,8 +150,8 @@ $(async function () {
             },
         ],
         "lengthChange": true,
-        "lengthMenu": [[15, 30, 50, 100, 5000], [15, 30, 50, 100, "Alle"]],
-        "pageLength": 15,
+        "lengthMenu": [[10, 30, 50, 100, 5000], [10, 30, 50, 100, "Alle"]],
+        "pageLength": 10,
         aaSorting: [[1, "asc"]],
         columnDefs: [
             {
@@ -183,52 +199,50 @@ $(async function () {
     });
 
     //filter date
-    $(function () {
-        $('input[name="daterange"]').daterangepicker({
-            opens: 'left'
-        }, function (start, end, label) {
-            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-            var minDateFilter = start.format('YYYY-MM-DD');
-            var maxDateFilter = end.format('YYYY-MM-DD');
-            $.fn.dataTable.ext.search.push(
-                function (settings, data, dataIndex) {
-                    var min = parseInt(minDateFilter, 10);
-                    var max = parseInt(maxDateFilter, 10);
-                    var age = parseFloat(data[5]) || 0; // use data for the age column
-
-                    if ((isNaN(min) && isNaN(max)) ||
-                        (isNaN(min) && age <= max) ||
-                        (min <= age && isNaN(max)) ||
-                        (min <= age && age <= max)) {
-                        return true;
-                    }
-                    return false;
-                }
-            );
-            dt.draw();
-        });
+    $('#regyearStart').daterangepicker({
+        "singleDatePicker": true,
+        "showDropdowns": true,
+        "startDate": "01/01/1900",
+        "endDate": "01/01/2023",
+    }, function (start, end, label) {
+        $(this).val(start.format('YYYY-MM-DD'));
+    });
+    $('#regyearEnd').daterangepicker({
+        "singleDatePicker": true,
+        "showDropdowns": true,
+        "startDate": "04/28/2022",
+        "endDate": "01/01/2023",
+    }, function (start, end, label) {
+        $(this).val(start.format('YYYY-MM-DD'));
     });
 
-    //filter ansatte between (not finished)
-    $('#ansatteMin, #ansatteMax').on('keyup', function () {
-        var minAnsatte = $("#ansatteMin").val();
-        var maxAnsatte = $("#ansatteMax").val();
-        console.log(minAnsatte, maxAnsatte);
+    $("#regyearStart").on('change'), function () {
+        var minDate = $('#regyearStart').val().format('YYYY-MM-DD');
+        var maxDate = $('#regyearEnd').val().format('YYYY-MM-DD');
+        console.log(minDate, maxDate);
+        // Custom filtering function which will search data in column four between two values
         $.fn.dataTable.ext.search.push(
             function (settings, data, dataIndex) {
-                var min = parseInt(minAnsatte, 10);
-                var max = parseInt(maxAnsatte, 10);
-                var age = parseInt(data[3]) || 0; // use data for the age column
+                var min = minDate.val();
+                var max = maxDate.val();
+                var date = new Date(data[5]);
 
-                if ((isNaN(min) && isNaN(max)) ||
-                    (isNaN(min) && age <= max) ||
-                    (min <= age && isNaN(max)) ||
-                    (min <= age && age <= max)) {
+                if (
+                    (min === null && max === null) ||
+                    (min === null && date <= max) ||
+                    (min <= date && max === null) ||
+                    (min <= date && date <= max)
+                ) {
                     return true;
                 }
                 return false;
             }
         );
+        dt.draw();
+    }
+
+    //filter ansatte between (not finished)
+    $('#ansatteMin, #ansatteMax').on('keyup', function () {
         dt.draw();
     });
 
