@@ -1,11 +1,11 @@
 # nfkutvikleroppgave
 
 # Built With
-#  Backend
+##  Backend
 Nodejs, express
-#   Frontend
+## Frontend
 HTML, JavaScript, Bootstrap5/CSS
-#    Database
+## Database
 MySQL
 
 # What does it do?
