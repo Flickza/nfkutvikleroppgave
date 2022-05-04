@@ -61,7 +61,11 @@
           </div>
           <div class="col-2">
             Ansatte:
-            <input id="ex10" type="range" class="form-control" data-handle="custom"/>
+            <div class="input-group">
+              <input type="number" id="ansatteMin" class="form-control form-control-sm" value="0" />
+              <span class="input-group-btn" style="width:0px;"></span>
+              <input type="number" id="ansatteMax" class="form-control form-control-sm" value="50000" style="margin-left:-1px" />
+            </div>
           </select>
           </div>
           <div class="col-1"></div>

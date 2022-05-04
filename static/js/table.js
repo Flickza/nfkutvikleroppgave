@@ -195,7 +195,7 @@ $(async function () {
                     var min = parseInt(minDateFilter, 10);
                     var max = parseInt(maxDateFilter, 10);
                     var age = parseFloat(data[5]) || 0; // use data for the age column
-        
+
                     if ((isNaN(min) && isNaN(max)) ||
                         (isNaN(min) && age <= max) ||
                         (min <= age && isNaN(max)) ||
@@ -207,6 +207,29 @@ $(async function () {
             );
             dt.draw();
         });
+    });
+
+    //filter ansatte between (not finished)
+    $('#ansatteMin, #ansatteMax').on('keyup', function () {
+        var minAnsatte = $("#ansatteMin").val();
+        var maxAnsatte = $("#ansatteMax").val();
+        console.log(minAnsatte, maxAnsatte);
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = parseInt(minAnsatte, 10);
+                var max = parseInt(maxAnsatte, 10);
+                var age = parseInt(data[3]) || 0; // use data for the age column
+
+                if ((isNaN(min) && isNaN(max)) ||
+                    (isNaN(min) && age <= max) ||
+                    (min <= age && isNaN(max)) ||
+                    (min <= age && age <= max)) {
+                    return true;
+                }
+                return false;
+            }
+        );
+        dt.draw();
     });
 
 
