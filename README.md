@@ -12,10 +12,10 @@ HTML, JavaScript, Bootstrap5/CSS
 MySQL
 
 ### Libraries
-1. mysql
-2. express
-3. fs
-4. node-fetch
-5. xlsx
-6. dataTables
-7. Bootstrap5
+- mysql
+- express
+- fs
+- node-fetch
+- xlsx
+- dataTables
+- Bootstrap5
