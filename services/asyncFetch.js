@@ -20,16 +20,16 @@ async function asyncFetch(orgliste) {
             })
             .then(res => {
                 requests++;
-                // console.log("getting data...", requests);
+                console.log("getting data...", requests);
                 return Promise.resolve(res);
             })
             .catch(error => {
                 requests++;
-                // console.error('There was an error!', requests);
+                console.error('There was an error!', requests);
             });
         batch.push(data);
     }
-
+    console.timeEnd("time");
     let batchResults = await Promise.all(batch);
 
     let undefinedResult = batchResults.filter(element => element == undefined);

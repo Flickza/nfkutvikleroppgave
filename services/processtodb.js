@@ -28,9 +28,9 @@ var syncDataFromFile = readJsonFile("./data.json")
 var liste = convertxlsx("organisasjonsnumre.xlsx");
 
 //make a request for half the org numbers
-var firstBatch = await forFetch(liste.splice(0, liste.length / 2));
+var firstBatch = await asyncFetch(liste.splice(0, liste.length / 2));
 //make a request for the second half of numbers
-var secondBatch = await forFetch(liste.splice(liste.length / 2, liste.length));
+var secondBatch = await asyncFetch(liste.splice(liste.length / 2, liste.length));
 
 //merge the two batches
 var result = [...firstBatch, ...secondBatch];
@@ -46,16 +46,16 @@ con.connect(function (err) {
 });
 
 const main = (jsonData) => {
-    // console.log("Inserting slave data...");
-    // for (var data in jsonData) {
-    //     slaveInsert(jsonData[data]);
-    // }
-    // console.log("Inserting slave data complete.");
-    // console.log("Inserting main data...");
-    // for (var data in jsonData) {
-    //     mainInsert(jsonData[data]);
-    // }
-    // console.log("Inserting main data complete.");
+    console.log("Inserting slave data...");
+    for (var data in jsonData) {
+        slaveInsert(jsonData[data]);
+    }
+    console.log("Inserting slave data complete.");
+    console.log("Inserting main data...");
+    for (var data in jsonData) {
+        mainInsert(jsonData[data]);
+    }
+    console.log("Inserting main data complete.");
 
 
 }
