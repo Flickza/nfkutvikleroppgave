@@ -159,6 +159,14 @@ $(async function () {
                 className: 'noVis'
             }
         ],
+        responsive: {
+            breakpoints: [
+                { name: 'desktop', width: Infinity },
+                { name: 'tablet', width: 1024 },
+                { name: 'fablet', width: 768 },
+                { name: 'phone', width: 480 }
+            ]
+        }
     });
 
     //individual column search handler
@@ -204,6 +212,7 @@ $(async function () {
             locale: {
                 format: 'YYYY-MM-DD'
             },
+            "minYear": 1800,
             "singleDatePicker": true,
             "showDropdowns": true,
         }, function (start, end, label) {
@@ -231,7 +240,7 @@ $(async function () {
         $.fn.dataTable.ext.search.push(
             function (settings, data, dataIndex) {
                 var date = data[5];
-                console.log(start, date, end);
+                // console.log(start, date, end);
                 if (
                     (start === null && end === null) ||
                     (start === null && date <= end) ||
@@ -316,13 +325,13 @@ $(async function () {
         $("#kommuneCategories").val("");
         $("#orgformCategories").val("");
         $("#naeringskodeCategories").val("");
-        $("#regyearStart").val("1950-01-01");
+        $("#regyearStart").val("1900-01-01");
         $("#regyearEnd").val("2023-01-01");
         $("#ansatteMin").val(0);
         $("#ansatteMax").val(50000);
         $("#ansatteMin").trigger("change");
         $("#ansatteMax").trigger("change");
-        
+        dateFilter();
         //draw table with names column being sorted alpabeticallys
         dt.order([1, 'asc']).draw();
     }

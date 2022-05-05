@@ -24,16 +24,15 @@
     <link rel="stylesheet" href="/static/css/styles.css" />
     <title>Organisasjoner</title>
   </head>
-  <body class="bg-dark">
-    <div id="main" class="container-fluid" style="height: 100%;">
-      <div class="container-fluid bg-light mt-5 rounded border border-2 border-secondary" style="width: 95%; height: 100%;">
+  <body class="bg-light">
+    <div id="main" class="container-fluid bg-light mt-5 rounded" style="height: 100%; width:97%;">
         <center>
           <h5 class="mt-2"><i class="bi bi-search"></i> Avanserte filter</h5>
           <hr>
         </center>
           <div class="row">
-            <div class="col-1"></div>
-            <div class="col-2">
+            <div class="col-sm"></div>
+            <div class="col-sm">
               Kommune:
               <select
                 name="kommuneCategories"
@@ -42,7 +41,7 @@
               >
               <option value="">Alle</option></select>
             </select></div>
-            <div class="col-2">
+            <div class="col-sm">
               Organisasjonsform:
               <select
                 name="orgformCategories"
@@ -51,7 +50,7 @@
               >
             <option value="">Alle</option></select>
             </div>
-            <div class="col-2">
+            <div class="col-sm">
               Næringskode:
               <select
                 name="naeringskodeCategories"
@@ -59,12 +58,12 @@
                 id="naeringskodeCategories"
               ></select>
             </div>
-            <div class="col-2">
+            <div class="col-sm">
               Velg regdato:
-              <input type="text" name="regyear" id="regyearStart" class="form-control form-control-sm" value="1950-01-01" />
+              <input type="text" name="regyear" id="regyearStart" class="form-control form-control-sm" value="1900-01-01" />
               <input type="text" name="regyear" id="regyearEnd" class="form-control form-control-sm" value="2023-01-01" />
             </div>
-            <div class="col-2">
+            <div class="col-sm">
               Ansatte:
               <div class="input-group">
                 <input type="number" id="ansatteMin" class="form-control form-control-sm" value="0" />
@@ -73,20 +72,21 @@
               </div>
             </select>
             </div>
-            <div class="col-1">
+            <div class="col-sm">
               Nullstill:
               <div class="input-group">
                 <button id="resetFilters" class="btn btn-sm btn-primary"><i class="bi bi-arrow-clockwise"></i></button></div>
               </div>
           </div>
           <hr>
-          <div class="row toolrow d-flex align-items-center mt-5">
-            <div class="col-7"></div>
-            <div class="col-3 toolbarfilter"></div>
-            <div class="col-2 toolbarexport"></div>
+          <div class="row toolrow mt-5">
+            <div class="col-lg"></div>
+            <div class="col-lg"></div>
+            <div class="col-sm toolbarfilter"></div>
+            <div class="col-sm toolbarexport"></div>
           </div>
         <div class="row mt-2">
-          <div class="col-12">
+          <div class="col-xl">
             <table id="table" class="table table-striped display table-sm">
               <thead>
                 <tr class="sFields">
@@ -132,7 +132,6 @@
             </div>
       </footer>
       </div>
-    </div>
     <script>
       console.info(
         'Made by @Flickza (Adel Johan Holm Gundersen)'
