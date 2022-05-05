@@ -206,10 +206,9 @@ $(async function () {
             },
             "singleDatePicker": true,
             "showDropdowns": true,
-            "startDate": "1950-01-01",
-            "endDate": "2022-01-01",
         }, function (start, end, label) {
             $("#regyearStart").val(start.format('YYYY-MM-DD'));
+            dateFilter();
         });
         $('#regyearEnd').daterangepicker({
             locale: {
@@ -217,39 +216,38 @@ $(async function () {
             },
             "singleDatePicker": true,
             "showDropdowns": true,
-            "startDate": "2022-01-01",
-            "endDate": "2023-01-01",
         }, function (start, end, label) {
             $("#regyearEnd").val(start.format('YYYY-MM-DD'));
+            dateFilter();
+
         });
     });
 
     //work in progress
-    // $("#regyearStart, #regyearEnd").on('change', function () {
-    //     var minDate = $('#regyearStart').val();
-    //     var maxDate = $('#regyearEnd').val();
-    //     console.log(minDate, maxDate);
-    //     // Custom filtering function which will search data in column four between two values
-    //     $.fn.dataTable.ext.search.push(
-    //         function (settings, data, dataIndex) {
-    //             var min = "2019-06-13";
-    //             var max = "2020-06-13";
-    //             var date = new Date(data[5]);
+    var dateFilter = () => {
+        var start = $("#regyearStart").val();
+        var end = $("#regyearEnd").val();
+        // Custom filtering function which will search data in column four between two values
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var date = data[5];
+                console.log(start, date, end);
+                if (
+                    (start === null && end === null) ||
+                    (start === null && date <= end) ||
+                    (start <= date && end === null) ||
+                    (start <= date && date <= end)
+                ) {
+                    return true;
+                }
+                return false;
+            }
+        );
+        dt.draw();
+    }
 
-    //             if (
-    //                 (min === null && max === null) ||
-    //                 (min === null && date <= max) ||
-    //                 (min <= date && max === null) ||
-    //                 (min <= date && date <= max)
-    //             ) {
-    //                 return true;
-    //             }
-    //             return false;
-    //         }
-    //     );
-    //     dt.draw();
-    // });
-    //filter ansatte between (not finished)
+
+    //filter ansatte between
     $('#ansatteMin, #ansatteMax').on('keyup', function () {
         dt.draw();
     });
@@ -317,7 +315,7 @@ $(async function () {
         $("#orgformCategories").val("");
         $("#naeringskodeCategories").val("");
         $("#regyearStart").val("1950-01-01");
-        $("#regyearEnd").val("2022-01-01");
+        $("#regyearEnd").val("2023-01-01");
         $("#ansatteMin").val(0);
         $("#ansatteMax").val(50000);
         $("#ansatteMin").trigger("change");
