@@ -308,4 +308,20 @@ $(async function () {
             $('#' + id + ' td.details-control').trigger('click');
         });
     });
+
+
+    //reset search filters button
+    $("#resetFilters").on("click", function () {
+        dt.columns().search('').draw();
+        $("#kommuneCategories").val("");
+        $("#orgformCategories").val("");
+        $("#naeringskodeCategories").val("");
+        $("#regyearStart").val("1950-01-01");
+        $("#regyearEnd").val("2022-01-01");
+        $("#ansatteMin").val(0);
+        $("#ansatteMax").val(50000);
+        $("#ansatteMin").trigger("change");
+        $("#ansatteMax").trigger("change");
+    }
+    );
 });
