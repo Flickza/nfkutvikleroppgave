@@ -24,69 +24,67 @@
     <link rel="stylesheet" href="/static/css/styles.css" />
     <title>Organisasjoner</title>
   </head>
-  <body>
-    <div id="main" class="container-fluid" style="height: 100%">
-      <div class="container-fluid mt-4">
+  <body class="bg-dark">
+    <div id="main" class="container-fluid" style="height: 100%;">
+      <div class="container-fluid bg-light mt-5 rounded border border-2 border-secondary" style="width: 95%; height: 100%;">
         <center>
-        <h5>Avanserte filter</h5>
-        <hr>
-      </center>
-        <div class="row">
-          <div class="col-1"></div>
-          <div class="col-2">
-            Kommune:
-            <select
-              name="kommuneCategories"
-              class="form-control form-control-sm"
-              id="kommuneCategories"
-            >
+          <h5 class="mt-2"><i class="bi bi-search"></i> Avanserte filter</h5>
+          <hr>
+        </center>
+          <div class="row">
+            <div class="col-1"></div>
+            <div class="col-2">
+              Kommune:
+              <select
+                name="kommuneCategories"
+                class="form-control form-control-sm"
+                id="kommuneCategories"
+              >
+              <option value="">Alle</option></select>
+            </select></div>
+            <div class="col-2">
+              Organisasjonsform:
+              <select
+                name="orgformCategories"
+                class="form-control form-control-sm"
+                id="orgformCategories"
+              >
             <option value="">Alle</option></select>
-          </select></div>
-          <div class="col-2">
-            Organisasjonsform:
-            <select
-              name="orgformCategories"
-              class="form-control form-control-sm"
-              id="orgformCategories"
-            >
-          <option value="">Alle</option></select>
-          </div>
-          <div class="col-2">
-            Næringskode:
-            <select
-              name="naeringskodeCategories"
-              class="form-control form-control-sm"
-              id="naeringskodeCategories"
-            ></select>
-          </div>
-          <div class="col-2">
-            Velg regdato:
-            <input type="text" name="regyear" id="regyearStart" class="form-control form-control-sm" value="1950-01-01" />
-            <input type="text" name="regyear" id="regyearEnd" class="form-control form-control-sm" value="2023-01-01" />
-          </div>
-          <div class="col-2">
-            Ansatte:
-            <div class="input-group">
-              <input type="number" id="ansatteMin" class="form-control form-control-sm" value="0" />
-              <span class="input-group-btn" style="width:0px;"></span>
-              <input type="number" id="ansatteMax" class="form-control form-control-sm" value="50000" style="margin-left:-1px" />
             </div>
-          </select>
-          </div>
-          <div class="col-1">
-            Nullstill:
-            <div class="input-group">
-              <button id="resetFilters" class="btn btn-sm btn-primary"><i class="bi bi-arrow-clockwise"></i></button></div>
+            <div class="col-2">
+              Næringskode:
+              <select
+                name="naeringskodeCategories"
+                class="form-control form-control-sm"
+                id="naeringskodeCategories"
+              ></select>
             </div>
-        </div>
-        <hr>
-        <div class="row toolrow d-flex align-items-center mt-5">
-          <div class="col-7"></div>
-          <div class="col-3 toolbarfilter"></div>
-          <div class="col-2 toolbarexport"></div>
-        </div>
-      </div>
-      <div class="container-fluid" style="width: 95%">
+            <div class="col-2">
+              Velg regdato:
+              <input type="text" name="regyear" id="regyearStart" class="form-control form-control-sm" value="1950-01-01" />
+              <input type="text" name="regyear" id="regyearEnd" class="form-control form-control-sm" value="2023-01-01" />
+            </div>
+            <div class="col-2">
+              Ansatte:
+              <div class="input-group">
+                <input type="number" id="ansatteMin" class="form-control form-control-sm" value="0" />
+                <span class="input-group-btn" style="width:0px;"></span>
+                <input type="number" id="ansatteMax" class="form-control form-control-sm" value="50000" style="margin-left:-1px" />
+              </div>
+            </select>
+            </div>
+            <div class="col-1">
+              Nullstill:
+              <div class="input-group">
+                <button id="resetFilters" class="btn btn-sm btn-primary"><i class="bi bi-arrow-clockwise"></i></button></div>
+              </div>
+          </div>
+          <hr>
+          <div class="row toolrow d-flex align-items-center mt-5">
+            <div class="col-7"></div>
+            <div class="col-3 toolbarfilter"></div>
+            <div class="col-2 toolbarexport"></div>
+          </div>
         <div class="row mt-2">
           <div class="col-12">
             <table id="table" class="table table-striped display table-sm">
@@ -125,8 +123,21 @@
             </table>
           </div>
         </div>
+        <footer>
+            <div class="row mt-3">
+              <br>
+                <div class="container">
+                  <span>Made by <a href="https://www.github.com/Flickza">@Flickza</a> (Adel Johan Holm Gundersen)</span>
+                </div>
+            </div>
+      </footer>
       </div>
     </div>
+    <script>
+      console.info(
+        'Made by @Flickza (Adel Johan Holm Gundersen)'
+      );
+      </script>
     <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript">
       document.addEventListener("DOMContentLoaded", function () {

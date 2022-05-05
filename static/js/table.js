@@ -310,7 +310,9 @@ $(async function () {
 
     //reset search filters button
     $("#resetFilters").on("click", function () {
+        //set search filter of table to empty string
         dt.columns().search('').draw();
+        //set values of search inputs to either empty string or the default value
         $("#kommuneCategories").val("");
         $("#orgformCategories").val("");
         $("#naeringskodeCategories").val("");
@@ -320,6 +322,8 @@ $(async function () {
         $("#ansatteMax").val(50000);
         $("#ansatteMin").trigger("change");
         $("#ansatteMax").trigger("change");
+        
+        //draw table with names column being sorted alpabeticallys
         dt.order([1, 'asc']).draw();
     }
     );
