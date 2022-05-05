@@ -20,7 +20,7 @@ function get(url) {
             .catch(err => { reject(err) })
     });
 }
-async function result() {
+async function syncFetch(response) {
     for (let i = 0; i < orgliste.length; i++) {
         const value = await get(`https://data.brreg.no/enhetsregisteret/api/enheter/${orgliste[i]}`);
         console.log(i);
@@ -32,14 +32,17 @@ async function result() {
     var check2 = array.filter(e => e != undefined);
     const data = JSON.stringify(check2);
 
-    // write JSON string to a file
-    fs.writeFile('user.json', data, (err) => {
-        if (err) {
-            throw err;
-        }
-        console.log("JSON data is saved.");
-    });
+    if (response == "write") {
+        // write JSON string to a file
+        fs.writeFile('user.json', data, (err) => {
+            if (err) {
+                throw err;
+            }
+            console.log("JSON data is saved.");
+        });
+    } else if (response == "get") {
+        return data;
+    }
 }
 
-result()
-
+export { syncFetch };

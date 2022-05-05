@@ -322,6 +322,7 @@ $(async function () {
         $("#ansatteMax").val(50000);
         $("#ansatteMin").trigger("change");
         $("#ansatteMax").trigger("change");
+        dt.order([1, 'asc']).draw();
     }
     );
 });

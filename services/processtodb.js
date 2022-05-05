@@ -3,6 +3,7 @@ import mysql from 'mysql';
 import { DB_USERNAME, DB_PASSWORD } from '../dbconfig.js';
 import {asyncFetch} from './asyncFetch.js';
 import { slaveInsert, mainInsert } from './mysql/functions.js';
+import { syncFetch } from './syncFetch.js';
 import fs from 'fs';
 
 function readJsonFile(file) {
