@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import convertxlsx from './static/js/xlsxtoarray.js';
+import convertxlsx from '../static/js/xlsxtoarray.js';
 import fs from 'fs';
 
 let orgliste = convertxlsx("organisasjonsnumre.xlsx");
@@ -34,7 +34,7 @@ async function syncFetch(response) {
 
     if (response == "write") {
         // write JSON string to a file
-        fs.writeFile('user.json', data, (err) => {
+        fs.writeFile('syncData.json', data, (err) => {
             if (err) {
                 throw err;
             }

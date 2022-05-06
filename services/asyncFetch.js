@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-
+import fs from 'fs';
 
 //fetch all data from api for list
 async function asyncFetch(orgliste) {
@@ -31,12 +31,16 @@ async function asyncFetch(orgliste) {
     }
     console.timeEnd("time");
     let batchResults = await Promise.all(batch);
+    var data = JSON.parse(JSON.stringify(batchResults));
 
-    let undefinedResult = batchResults.filter(element => element == undefined);
-    let result = batchResults.filter(element => element != undefined);
-    console.log("undefinedResult", undefinedResult.length);
-    console.log("result", result.length);
-    return result;
+    // write JSON string to a file
+    fs.writeFile('asyncData.json', JSON.stringify(batchResults), (err) => {
+        if (err) {
+            throw err;
+        }
+        console.log("JSON data is saved.");
+    });
+    return data;
 }
 
 export { asyncFetch };
